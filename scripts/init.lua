@@ -7,9 +7,8 @@ local mod = {
 }
 
 function mod:init()
-    modApi:appendAsset("img/units/player/palette.png",self.resourcePath.."img/palette.png")
 	modApi:addPalette{
-        Image = "img/units/player/palette.png",
+        Image = "img/units/player/AngryM_Tornado_gust_ns.png",
 		ID = "AngryM_Tornado_Palette",
 		Name = "Turbulent Tricksters' Lemon",
 		PlateHighlight = {75,229,193},--lights
