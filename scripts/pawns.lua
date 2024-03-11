@@ -33,7 +33,7 @@ AngryM_Tornado_Fan = Pawn:new{
 	Flying = true,
 	Armor = true,
     ImageOffset = modApi:getPaletteImageOffset("AngryM_Tornado_Palette"),
-	SkillList = { "Ranged_Ice" },
+	SkillList = { "AngryM_Tornado_Fan_Wep" },
 	SoundLocation = "/mech/science/science_mech/",
 	DefaultTeam = TEAM_PLAYER,
 	ImpactMaterial = IMPACT_METAL,
@@ -59,22 +59,23 @@ end
 
 AngryM_Tornado_BikeMove = Move:new{}
 function AngryM_Tornado_BikeMove:GetSkillEffect(p1, p2)
-
 	local ret = SkillEffect()
 	local move = PointList()
 	move:push_back(p1)
 	move:push_back(p2)
-	local pathing = self.Phase and PATH_PHASING or PATH_PROJECTILE
+	local pathing = PATH_PHASING
 	move:push_back(GetProjectileEnd(p1,p2,pathing))
+	if p2.x == p1.x or p2.y == p1.y then
+		ret:AddCharge(Board:GetPath(p1, p2, Pawn:GetPathProf()), NO_DELAY)
+	else
+		ret:AddMove(Board:GetPath(p1, p2, Pawn:GetPathProf()), NO_DELAY)
+	end
 
-	ret:AddMove(Board:GetPath(p1, p2, Pawn:GetPathProf()), NO_DELAY)
 	local path = extract_table(Board:GetPath(p1, p2, Pawn:GetPathProf()))
 	for i = 1, #path do
 		local p = path[i]
 		ret:AddBounce(p, -2)
-		ret:AddBurst(p,"Emitter_Crack_Start", DIR_NONE)
 		ret:AddDelay(0.05)
 	end
-
 	return ret
 end
