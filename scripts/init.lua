@@ -3,22 +3,22 @@ local mod = {
 	name = "Turbulent Tricksters",
 	version = "0",
 	requirements = {},
-	icon = "img/icon.png"
+	icon = "img/mod_icon.png"
 }
 
 function mod:init()
 	modApi:addPalette{
         Image = "img/units/player/AngryM_Tornado_gust_ns.png",
 		ID = "AngryM_Tornado_Palette",
-		Name = "Turbulent Tricksters' Lemon",
-		PlateHighlight = {75,229,193},--lights
-		PlateLight     = {226,186,46},--main highlight
-		PlateMid       = {210,151,36},--main light
-		PlateDark      = {118,82,30},--main mid
-		PlateOutline   = {27,35,25},--main dark
-		BodyHighlight  = {177,211,108},--metal light
-		BodyColor      = {76,130,79},--metal mid
-		PlateShadow    = {49,74,54},--metal dark
+		Name = "Turbulent Tricksters' Amethist",
+		PlateHighlight = {30,220,230},--lights
+		PlateLight     = {118,96,146},--main highlight
+		PlateMid       = {84,59,114},--main light
+		PlateDark      = {45,22,75},--main mid
+		PlateOutline   = {26,6,50},--main dark
+		BodyHighlight  = {231,165,33},--metal light
+		BodyColor      = {161,78,16},--metal mid
+		PlateShadow    = {90,31,5},--metal dark
 	}
 	require(self.scriptPath .."pawns")
 	require(self.scriptPath .."assets")

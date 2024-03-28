@@ -1,6 +1,11 @@
 -------------- Prime - Spinfist ---------------------------
 
-AngryM_Tornado_Rotor_Wep = Skill:new{  
+local customAnim = require(mod_loader.mods[modApi.currentMod].scriptPath .."libs/customAnim")
+require(mod_loader.mods[modApi.currentMod].scriptPath .."libs/status")
+modApi:copyAsset("img/combat/icons/icon_mind_glow.png", "img/combat/icons/Nico_icon_mind_glow.png")
+Location["combat/icons/Nico_icon_mind_glow.png"] = Point(-12,12)
+AngryM_Tornado_Rotor_Wep = Skill:new{
+	Name = "Mercury Rotor",
 	Class = "Brute",
 	Icon = "weapons/prime_spinfist.png",
 	Description = "Push all adjacent tiles to the left or right.",
@@ -14,8 +19,9 @@ AngryM_Tornado_Rotor_Wep = Skill:new{
 	Halt = false,
 	PowerCost = 1, --AE Change
 	Upgrades = 2,
+	Confusion = false,
 	ZoneTargeting = ZONE_ALL,
- 	UpgradeList = { "Halt",  "+1 Damage"  },
+ 	UpgradeList = { "Halt","Confusion"},
 	UpgradeCost = { 1 , 3 },
 	TipImage = {
 		Unit = Point(2,2),
@@ -85,9 +91,16 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 				damage.sAnimation = "airpush_"..(i+1)%4
 			else
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage, (i+1)%4)
+				if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+					damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
+				end
 				damage.sAnimation = "airpush_"..(i+1)%4
 			end
 			ret:AddDamage(damage)
+			if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
+			end
+			damage.sImageMark = ""
 		end
 	else
 		for i = DIR_START,DIR_END do
@@ -98,9 +111,16 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 				damage.sAnimation = "airpush_"..(i-1)%4
 			else
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage, (i-1)%4)
+				if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+					damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
+				end
 				damage.sAnimation = "airpush_"..(i-1)%4
 			end
 			ret:AddDamage(damage)
+			if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
+			end
+			damage.sImageMark = ""
 		end
 	end
 	
@@ -113,8 +133,8 @@ AngryM_Tornado_Rotor_Wep_A = AngryM_Tornado_Rotor_Wep:new{
 }
 
 AngryM_Tornado_Rotor_Wep_B = AngryM_Tornado_Rotor_Wep:new{
-	UpgradeDescription = "+1 damage to all targets",
-	Damage = 1,
+	UpgradeDescription = "Confuses all enemy targets, making them make bad choices for 3 turns. Like targeting allies.",
+	Confusion = true,
 }
 
 AngryM_Tornado_Rotor_Wep_AB = AngryM_Tornado_Rotor_Wep_B:new{

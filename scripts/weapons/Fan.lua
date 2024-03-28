@@ -27,7 +27,7 @@ AngryM_Tornado_Fan_Wep = Skill:new{
 }
 AngryM_Tornado_Fan_Wep_A = AngryM_Tornado_Fan_Wep:new{UpgradeDescription = "if pushing the tile behing Mech would cause a bump, shields Mech.",BackShield=true}
 AngryM_Tornado_Fan_Wep_B = AngryM_Tornado_Fan_Wep:new{UpgradeDescription = "Spreads the effects of the tile behing Mech to the 3 tiles infront, smoke gets removed, fire, A.C.I.D. and ice do not.", Spread=true}
-AngryM_Tornado_Fan_Wep_AB = AngryM_Tornado_Fan_Wep_B:new{BackShield=true}
+AngryM_Tornado_Fan_Wep_AB = AngryM_Tornado_Fan_Wep_B:new{BackShield = true}
 
 AngryM_Tornado_Fan_Wep_B.TipImage = {
 	Unit = Point(2,3),
