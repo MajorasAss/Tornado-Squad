@@ -1,6 +1,6 @@
 
 AngryM_Tornado_Nitro_Wep = Leap_Attack:new{
-	Name = "Hermes Engines MK II",
+	Name = "Hermes Boosters",
 	Class = "Brute",
 	Icon = "weapons/brute_boosters.png",	
 	Rarity = 1,
@@ -96,13 +96,11 @@ function AngryM_Tornado_Nitro_Wep:GetSecondTargetArea(p1,p2)
 			
 			ret:push_back(curr)
 			
-			if Board:IsBlocked(curr, PATH_PROJECTILE) and not (Board:IsPawnSpace(curr) and Board:IsPawnTeam(curr,TEAM_PLAYER)) then
+			if Board:IsBlocked(curr, PATH_PROJECTILE) and not (Board:IsPawnSpace(curr) and Board:IsPawnTeam(curr,TEAM_PLAYER)) and curr ~= p1 then
 				break
 			end
 		end
 	end
-	ret:push_back(p1)
-	if p2~=p1 then self:RemoveBackwards(ret,p1,p2) end
 	return ret
 end
 
@@ -117,11 +115,15 @@ function AngryM_Tornado_Nitro_Wep:GetFinalEffect(p1, p2, p3)
 	if self.Fly == 0 then pathing = Pawn:GetPathProf() end
 	local doDamage = true
 	local target = GetProjectileEnd(p2,p3,pathing)
-	local distance = p2:Manhattan(target)
+	if target == p1 then -- dont attack yourself, keep going
+		local temp_target = GetProjectileEnd(target,target + DIR_VECTORS[direction],pathing)
+		target = temp_target
+	end
 	if not Board:IsBlocked(target,pathing) then -- dont attack an empty edge square, just run to the edge
 		doDamage = false
 		target = target + DIR_VECTORS[direction]
 	end
+	local distance = p2:Manhattan(target)
 	local damage = SpaceDamage(target, self.Damage, direction)
 	damage.sAnimation = "ExploAir1"
 	damage.sSound = self.ImpactSound
@@ -129,7 +131,7 @@ function AngryM_Tornado_Nitro_Wep:GetFinalEffect(p1, p2, p3)
 		ret:AddMelee(p2,damage, NO_DELAY)
 		if doDamage then ret:AddDamage(SpaceDamage( target - DIR_VECTORS[direction] , self.SelfDamage)) end
 	else
-		ret:AddCharge(Board:GetSimplePath(p2, target - DIR_VECTORS[direction]), NO_DELAY)--FULL_DELAY)
+		ret:AddCharge(Board:GetPath(p2, target - DIR_VECTORS[direction],PATH_FLYER), NO_DELAY)--FULL_DELAY)
 		local temp = p2 
 		while temp ~= target  do 
 			ret:AddBounce(temp,-3)

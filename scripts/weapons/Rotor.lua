@@ -17,7 +17,7 @@ AngryM_Tornado_Rotor_Wep = Skill:new{
 	Push = 1,
 	TwoClick = true,
 	Halt = false,
-	PowerCost = 1, --AE Change
+	PowerCost = 0, --AE Change
 	Upgrades = 2,
 	Confusion = false,
 	ZoneTargeting = ZONE_ALL,
@@ -86,40 +86,36 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 	if clockwise then
 		for i = DIR_START,DIR_END do
 			collat = p1 + DIR_VECTORS[i]+DIR_VECTORS[(i+1)%4]
-			if self.Halt and self:GetCollateral(collat) then
+			if self.Halt and self:GetCollateral(collat) or (Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_PLAYER) and not Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_MECH)) then
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage)
 				damage.sAnimation = "airpush_"..(i+1)%4
 			else
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage, (i+1)%4)
-				if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
-					damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
-				end
 				damage.sAnimation = "airpush_"..(i+1)%4
 			end
-			ret:AddDamage(damage)
 			if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+				damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
 				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
 			end
+			ret:AddDamage(damage)
 			damage.sImageMark = ""
 		end
 	else
 		for i = DIR_START,DIR_END do
 			collat = p1 + DIR_VECTORS[i]+DIR_VECTORS[(i-1)%4]
 			damage.sAnimation = "airpush_"..(i-1)%4
-			if self.Halt and self:GetCollateral(collat) then
+			if self.Halt and self:GetCollateral(collat) or (Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_PLAYER) and not Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_MECH)) then
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage)
 				damage.sAnimation = "airpush_"..(i-1)%4
 			else
 				damage = SpaceDamage(p1 + DIR_VECTORS[i],self.Damage, (i-1)%4)
-				if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
-					damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
-				end
 				damage.sAnimation = "airpush_"..(i-1)%4
 			end
-			ret:AddDamage(damage)
 			if Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion then
+				damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
 				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
 			end
+			ret:AddDamage(damage)
 			damage.sImageMark = ""
 		end
 	end
