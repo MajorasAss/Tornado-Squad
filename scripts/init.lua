@@ -7,6 +7,17 @@ local mod = {
 }
 
 function mod:init()
+	-- rem effect image mark
+	modApi:copyAsset("img/combat/icons/icon_smoke_immune_glow.png", "img/combat/icons/Nico_Smoke_remove.png")
+	modApi:copyAsset("img/combat/icons/icon_acid_immune_glow.png", "img/combat/icons/Nico_Acid_remove.png")
+	modApi:copyAsset("img/combat/icons/icon_fire_immune_glow.png", "img/combat/icons/Nico_Fire_remove.png")
+	modApi:appendAsset("img/combat/icons/Nico_Ice_remove.png", self.resourcePath .."img/icon_frozen_immune.png")
+	Location["combat/icons/Nico_Ice_remove.png"] = Point(-10,8)
+	Location["combat/icons/Nico_Smoke_remove.png"] = Point(-10,8)
+	Location["combat/icons/Nico_Acid_remove.png"] = Point(-10,8)
+	Location["combat/icons/Nico_Fire_remove.png"] = Point(-10,8)
+	modApi:copyAsset("img/combat/icons/icon_mind_glow.png", "img/combat/icons/Nico_icon_mind_glow.png")
+	Location["combat/icons/Nico_icon_mind_glow.png"] = Point(-12,12)
 	modApi:addPalette{
         Image = "img/units/player/AngryM_Tornado_gust_ns.png",
 		ID = "AngryM_Tornado_Palette",

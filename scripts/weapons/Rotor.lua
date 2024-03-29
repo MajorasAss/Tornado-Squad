@@ -2,8 +2,6 @@
 
 local customAnim = require(mod_loader.mods[modApi.currentMod].scriptPath .."libs/customAnim")
 require(mod_loader.mods[modApi.currentMod].scriptPath .."libs/status")
-modApi:copyAsset("img/combat/icons/icon_mind_glow.png", "img/combat/icons/Nico_icon_mind_glow.png")
-Location["combat/icons/Nico_icon_mind_glow.png"] = Point(-12,12)
 AngryM_Tornado_Rotor_Wep = Skill:new{
 	Name = "Mercury Rotor",
 	Class = "Brute",
@@ -17,17 +15,19 @@ AngryM_Tornado_Rotor_Wep = Skill:new{
 	Push = 1,
 	TwoClick = true,
 	Halt = false,
+	Flame = false,
 	PowerCost = 0, --AE Change
 	Upgrades = 2,
 	Confusion = false,
 	ZoneTargeting = ZONE_ALL,
- 	UpgradeList = { "Halt","Confusion"},
-	UpgradeCost = { 1 , 3 },
+ 	UpgradeList = { "Halt and Flame","Confusion"},
+	UpgradeCost = { 2 , 2 },
 	TipImage = {
 		Unit = Point(2,2),
 		Enemy1 = Point(2,1),
 		Target = Point(2,1),
 		Enemy2 = Point(1,2),
+		Smoke = Point(3,2),
 		Friendly = Point(1,3),
 		Building = Point(1,1),
 		Second_Click = Point(1,1),
@@ -97,6 +97,18 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 				damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
 				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
 			end
+			if self.Flame and Board:IsSmoke(damage.loc) then
+				if not (Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion) then
+					damage.sImageMark = "combat/icons/Nico_Smoke_remove.png" end
+				damage.iSmoke = EFFECT_REMOVE
+				local flame1 = SpaceDamage(p1 + DIR_VECTORS[i]+DIR_VECTORS[(i+1)%4],0)
+				flame1.iFire = EFFECT_CREATE
+				ret:AddDamage(flame1)
+				local flame2 = SpaceDamage(p1 + DIR_VECTORS[i]+DIR_VECTORS[(i+1)%4]+DIR_VECTORS[(i+1)%4],0)
+				flame2.sAnimation = "flamethrower2_"..((i+1)%4)
+				flame2.iFire = EFFECT_CREATE
+				ret:AddDamage(flame2)
+			end
 			ret:AddDamage(damage)
 			damage.sImageMark = ""
 		end
@@ -115,6 +127,18 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 				damage.sImageMark = "combat/icons/Nico_icon_mind_glow.png"
 				ret:AddScript(string.format("Status.ApplyConfusion(%s, 3)", Board:GetPawn(p1 + DIR_VECTORS[i]):GetId()))
 			end
+			if self.Flame and Board:IsSmoke(damage.loc) then
+				if not (Board:IsPawnTeam(p1 + DIR_VECTORS[i], TEAM_ENEMY) and self.Confusion) then
+					damage.sImageMark = "combat/icons/Nico_Smoke_remove.png" end
+				damage.iSmoke = EFFECT_REMOVE
+				local flame1 = SpaceDamage(p1 + DIR_VECTORS[i]+DIR_VECTORS[(i-1)%4],0)
+				flame1.iFire = EFFECT_CREATE
+				ret:AddDamage(flame1)
+				local flame2 = SpaceDamage(p1 + DIR_VECTORS[i]+DIR_VECTORS[(i-1)%4]+DIR_VECTORS[(i-1)%4],0)
+				flame2.sAnimation = "flamethrower2_"..(((i-1))%4)
+				flame2.iFire = EFFECT_CREATE
+				ret:AddDamage(flame2)
+			end
 			ret:AddDamage(damage)
 			damage.sImageMark = ""
 		end
@@ -124,15 +148,17 @@ function AngryM_Tornado_Rotor_Wep:GetFinalEffect(p1, p2, p3)
 end
 
 AngryM_Tornado_Rotor_Wep_A = AngryM_Tornado_Rotor_Wep:new{
-	UpgradeDescription = "Avoids pushing targets into buildings and non-Mech allies.",
+	UpgradeDescription = "Avoids pushing targets into buildings and non-Mech allies. Ignites Smoke, removing it.",
 	Halt = true,
+	Flame = true,
 }
 
 AngryM_Tornado_Rotor_Wep_B = AngryM_Tornado_Rotor_Wep:new{
-	UpgradeDescription = "Confuses all enemy targets, making them make bad choices for 3 turns. Like targeting allies.",
+	UpgradeDescription = "Confuses all enemy targets, making them make bad choices for 3 turns. Like targeting other Vek.",
 	Confusion = true,
 }
 
 AngryM_Tornado_Rotor_Wep_AB = AngryM_Tornado_Rotor_Wep_B:new{
 	Halt = true,
+	Flame = true,
 }

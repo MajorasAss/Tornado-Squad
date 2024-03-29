@@ -1,10 +1,12 @@
 
 AngryM_Tornado_Nitro_Wep = Leap_Attack:new{
 	Name = "Hermes Boosters",
+	Description = "Can jump forward, smoking the tile it lands on, after that, fly in a line and slam into the target, pushing and damaging it.",
 	Class = "Brute",
-	Icon = "weapons/brute_boosters.png",	
+	Icon = "weapons/brute_boosters.png",
+	Damage = 1,
 	Rarity = 1,
-	Range = 2,
+	Range = 3,
 	PowerCost = 0,
 	TwoClick = true,
 	Upgrades = 2,
@@ -22,9 +24,9 @@ AngryM_Tornado_Nitro_Wep = Leap_Attack:new{
 		Second_Click = Point(4,2),
 	}
 }
-AngryM_Tornado_Nitro_Wep_A = AngryM_Tornado_Nitro_Wep:new{UpgradeDescription = "Increases jump range by 2",Range=4,}
-AngryM_Tornado_Nitro_Wep_B = AngryM_Tornado_Nitro_Wep:new{UpgradeDescription = "Increases charge damage by 1.",Damage=1}
-AngryM_Tornado_Nitro_Wep_AB = AngryM_Tornado_Nitro_Wep_B:new{Range=4,}
+AngryM_Tornado_Nitro_Wep_A = AngryM_Tornado_Nitro_Wep:new{UpgradeDescription = "Increases jump range by 2",Range = 5,}
+AngryM_Tornado_Nitro_Wep_B = AngryM_Tornado_Nitro_Wep:new{UpgradeDescription = "Increases charge damage by 1.",Damage = 2}
+AngryM_Tornado_Nitro_Wep_AB = AngryM_Tornado_Nitro_Wep_B:new{Range = 5,}
 AngryM_Tornado_Nitro_Wep_A.TipImage = {
 	Unit = Point(2,5),
 	Enemy = Point(4,1),
@@ -77,9 +79,10 @@ function AngryM_Tornado_Nitro_Wep:GetSkillEffect(p1,p2)
 	ret:AddLeap(move, FULL_DELAY)
 	ret:AddBurst(p1,"Emitter_Burst_$tile",DIR_NONE)
 
-	local damage = SpaceDamage(p1, self.SelfDamage)
+	local damage = SpaceDamage(p2, self.SelfDamage)
 	damage.sAnimation = self.SelfAnimation
-	if self.SelfDamage ~= 0 then ret:AddDamage(damage) end
+	damage.iSmoke = EFFECT_CREATE
+	ret:AddDamage(damage)
 	ret:AddBounce(p1,3)
 	
 	return ret
